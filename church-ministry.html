@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Church Ministry | New Life and Light Society</title>
+
+    <meta name="description"
+        content="New Life and Light Assembly Church Ministry. Join us for service and share our faith and love.">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <link rel="preconnect" href="https://unpkg.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #1a3a5c;
+            --primary-dark: #0f2640;
+            --primary-light: #2a5080;
+            --secondary: #d4a84b;
+            --secondary-light: #e8c675;
+            --accent: #f5f0e8;
+            --text-dark: #1a1a2e;
+            --text-muted: #5a6a7a;
+            --text-light: #8a9aaa;
+            --bg-light: #f8f9fa;
+            --bg-cream: #fdfcfa;
+            --bg-blue-light: #e8eff5;
+            --white: #ffffff;
+            --purple-main: #6a106a;
+            --purple-dark: #4a0b4a;
+            --transition: all 0.15s ease;
+            --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        /* Preloader */
+        #preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--white);
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.5s ease;
+        }
+
+        .loader-logo {
+            width: 100px;
+            animation: pulse-logo 2s infinite;
+        }
+
+        @keyframes pulse-logo {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.1);
+                opacity: 0.8;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--text-dark);
+            line-height: 1.7;
+            background: var(--bg-cream);
+            font-size: 16px;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            padding: 0 20px;
+        }
+
+        /* ========== HEADER ========== */
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: var(--white);
+            z-index: 1000;
+            box-shadow: var(--shadow-soft);
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 100px;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            text-decoration: none;
+        }
+
+        .logo-container img {
+            height: 55px;
+            transition: var(--transition);
+        }
+
+        .logo-container img:hover {
+            transform: scale(1.02);
+        }
+
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .logo-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            line-height: 1.2;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .logo-subtitle {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--secondary);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+            list-style: none;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-dark);
+            font-weight: 500;
+            font-size: 0.9rem;
+            letter-spacing: 0.2px;
+            transition: var(--transition);
+        }
+
+        .nav-links a:not(.btn-cta):hover {
+            color: var(--primary);
+        }
+
+        .btn-cta {
+            background: var(--secondary);
+            color: var(--primary-dark) !important;
+            padding: 12px 28px;
+            border-radius: 25px;
+            font-weight: 600;
+            transition: var(--transition);
+            border: none;
+        }
+
+        .btn-cta:hover {
+            background: var(--secondary-light);
+            transform: translateY(-2px);
+        }
+
+        /* ========== MINISTRY CONTENT ========== */
+        .ministry-content-section {
+            padding: 140px 0 80px;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .mb-5 {
+            margin-bottom: 3rem;
+        }
+
+        .mt-5 {
+            margin-top: 3rem;
+        }
+
+        .nllm-title {
+            color: var(--primary);
+            font-size: 4rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .welcome-title {
+            color: #1a3a5c;
+            font-size: 2.8rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .scripture-text {
+            color: #2a5080;
+            font-size: 1.8rem;
+            font-weight: 600;
+            font-style: italic;
+            margin-bottom: 10px;
+        }
+
+        .scripture-ref {
+            color: #2a5080;
+            font-size: 1.3rem;
+            font-weight: 500;
+            margin-bottom: 60px;
+        }
+
+        .ministry-grid {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 50px;
+            align-items: start;
+        }
+
+        .ministry-text-col {
+            text-align: left;
+        }
+
+        .sub-heading {
+            font-size: 2.5rem;
+            color: #1a3a5c;
+            margin-bottom: 25px;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .ministry-text-col p {
+            font-size: 1.05rem;
+            color: #333;
+            margin-bottom: 22px;
+            line-height: 1.7;
+        }
+
+        .btn-ministry-family {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            padding: 15px 40px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 700;
+            margin-top: 15px;
+            transition: var(--transition);
+            text-transform: uppercase;
+            box-shadow: 0 4px 15px rgba(26, 58, 92, 0.2);
+        }
+
+        .btn-ministry-family:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(26, 58, 92, 0.3);
+            color: white;
+        }
+
+        .ministry-img-col {
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+        }
+
+        .img-wrapper {
+            background: white;
+            padding: 8px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid #ddd;
+        }
+
+        .img-wrapper img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            display: block;
+        }
+
+        .img-caption {
+            margin-top: 12px;
+            font-size: 0.9rem;
+            color: #1a3a5c;
+            font-weight: 600;
+            text-align: center;
+            font-style: italic;
+        }
+
+        @media (max-width: 992px) {
+            .ministry-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .nllm-title {
+                font-size: 2.8rem;
+            }
+
+            .welcome-title {
+                font-size: 2rem;
+            }
+
+            .navbar {
+                height: auto;
+                padding: 15px 0;
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+        }
+
+        /* ========== FOOTER ========== */
+        footer {
+            background: var(--bg-blue-light);
+            padding: 60px 0 30px;
+            color: var(--text-dark);
+        }
+
+        .footer-main {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        @media (min-width: 992px) {
+            .footer-main {
+                grid-template-columns: 1fr 2fr;
+            }
+        }
+
+        .footer-content {
+            background: var(--white);
+            border-radius: 12px;
+            box-shadow: var(--shadow-soft);
+            overflow: hidden;
+            width: 100%;
+        }
+
+        .footer-links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            padding: 40px;
+            gap: 30px;
+        }
+
+        .footer-column h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column li {
+            margin-bottom: 12px;
+        }
+
+        .footer-column a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+
+        .footer-column a:hover {
+            color: var(--secondary);
+        }
+
+        .footer-bottom-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            padding: 40px;
+            gap: 30px;
+            background: #f1f5f9;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .footer-bottom-col h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        .footer-bottom-col p,
+        .footer-bottom-col a {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .footer-bottom-col i {
+            color: var(--secondary);
+            width: 20px;
+        }
+
+        .footer-copyright {
+            text-align: center;
+            padding-top: 40px;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            border-top: 1px solid #e2e8f0;
+            margin-top: 40px;
+        }
+
+        @media (max-width: 768px) {
+
+            .footer-links-grid,
+            .footer-bottom-grid {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Preloader -->
+    <div id="preloader">
+        <img src="images/logo.png" alt="Loading..." class="loader-logo" decoding="async">
+    </div>
+
+    <header>
+        <nav class="navbar container">
+            <a href="index.html" class="logo-container">
+                <img src="images/logo.png" alt="New Life and Light Logo" class="logo" loading="lazy" decoding="async">
+                <div class="logo-text">
+                    <span class="logo-title">New Life and Light Mission</span>
+                    <span class="logo-subtitle">COMPASSION-HOPE-LIFE-LIGHT</span>
+                </div>
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html">Homepage</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="church-ministry.html"
+                        style="color: var(--secondary); font-weight: 700; border-bottom: 2px solid var(--secondary);">Church
+                        Ministry</a></li>
+                <li><a href="campaigns.html">Campaigns</a></li>
+                <li><a href="contact.html">Contact Us</a></li>
+                <li><a href="donate.html">UPI Donation</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section class="ministry-content-section" data-aos="fade-up">
+        <div class="container text-center mb-5">
+            <h1 class="nllm-title">NLLM Church Ministry</h1>
+            <h2 class="welcome-title">Welcome to New Life and Light Assembly</h2>
+            <p class="scripture-text">God is my strong fortress, and he makes my way perfect.</p>
+            <p class="scripture-ref">2 Samuel 22:33</p>
+        </div>
+
+        <div class="container">
+            <div class="ministry-grid">
+                <div class="ministry-text-col" data-aos="fade-right">
+                    <h3 class="sub-heading">New Life and Light Ministry</h3>
+                    <p><strong>NLLM organization</strong> was started in 1990 by Bishop Victor Pierson, his wife Roslin
+                        and his son Johnson Pradeep with god's grace.</p>
+                    <p><strong>Our</strong> mission is to spread the knowledge of the <strong>Bible</strong>, the holy
+                        book that guides and enriches the lives of millions around the world. Through our teachings, we
+                        hope to inspire individuals to find meaning, purpose, and spiritual fulfillment in their lives,
+                        and to live according to the principles of <strong>love, compassion, and justice.</strong></p>
+                    <p><strong>We believe that the Bible offers a path to a better world, and we are committed to
+                            sharing this message with as many people as possible.</strong></p>
+                    <p>The <strong>New Life and Light Assembly Church</strong> is dedicated to the furtherance of the
+                        Gospel, equipping believers, evangelizing the lost, and proclaiming the inerrant biblical
+                        account of history. We believe that every person is a beloved child of God, and we strive to
+                        create an inclusive and diverse community where everyone feels accepted and valued.</p>
+                    <p>We welcome individuals of all ages, backgrounds, and beliefs, and invite you to come as you are
+                        and discover the grace and love of God that is available to all.</p>
+                    <p><strong>PLEASE SUPPORT OUR <span style="color: var(--secondary);">NLLM MISSION</span> AND JOIN US
+                            ....</strong></p>
+                    <a href="#" class="btn-ministry-family">OUR MINISTRY FAMILY</a>
+                </div>
+                <div class="ministry-img-col" data-aos="fade-left">
+                    <div class="img-wrapper">
+                        <img src="images/community-support.jpg" alt="Pastor V Johnson Pradeep Church Ministry" loading="lazy"
+                            decoding="async">
+                        <p class="img-caption">New Life and Light Assembly - Pastor V Johnson Pradeep Church Ministry
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Generic content below, or empty if user only wanted this banner. 
+         Normally a page has footer. Adding footer. -->
+
+    <footer>
+        <div class="container">
+            <div class="footer-main">
+                <!-- Removed Brand Card with large logo as requested -->
+
+                <!-- Right side - Main Footer Content -->
+                <div class="footer-content" style="grid-column: 1 / -1;">
+                    <div class="footer-links-grid">
+                        <div class="footer-column">
+                            <h4>Campaigns</h4>
+                            <ul>
+                                <li><a href="campaigns.html#women-empowerment">Empower Women and Girls</a></li>
+                                <li><a href="campaigns.html#poor-people-support">Helping Hands For Hunger</a></li>
+                                <li><a href="campaigns.html#children-education">Support Our Ministry Family</a></li>
+                                <li><a href="campaigns.html">Walking Bible Research Centre Campaign</a></li>
+                            </ul>
+                        </div>
+                        <div class="footer-column">
+                            <h4>Donation Links</h4>
+                            <ul>
+                                <li><a href="donate.html">Donate Using UPI</a></li>
+                                <li><a href="#">Donor Dashboard</a></li>
+                                <li><a href="#">Donor Support</a></li>
+                            </ul>
+                        </div>
+                        <div class="footer-column">
+                            <h4>Useful Links</h4>
+                            <ul>
+                                <li><a href="index.html">Home</a></li>
+                                <li><a href="about.html">About Us</a></li>
+                                <li><a href="church-ministry.html">Church Ministry</a></li>
+                                <li><a href="campaigns.html">Campaigns</a></li>
+                                <li><a href="contact.html">Contact Us</a></li>
+                                <li><a href="#">Privacy Policy</a></li>
+                                <li><a href="#">Terms of Service</a></li>
+                                <li><a href="#">Cancellation</a></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="footer-bottom-grid">
+                        <div class="footer-bottom-col">
+                            <a href="tel:+919908618641"><i class="fas fa-phone"></i> +91 9908618641</a>
+                            <a href="mailto:societynlls@gmail.com"><i class="fas fa-envelope"></i>
+                                societynlls@gmail.com</a>
+                        </div>
+                        <div class="footer-bottom-col" style="grid-column: span 2;">
+                            <h4>Location</h4>
+                            <p><i class="fas fa-map-marker-alt"></i> Pastor K. Vittal, Gurrampode (V&M), Nalgonda
+                                (Dist), Telangana - 508256</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-copyright">
+                © 2023 New Life and Light Mission Trust. All Rights Reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        // Premium Splash Screen (800ms minimum)
+        window.addEventListener('load', function () {
+            setTimeout(() => {
+                const p = document.getElementById('preloader');
+                if (p) {
+                    p.style.opacity = '0';
+                    setTimeout(() => p.style.display = 'none', 300);
+                }
+            }, 800);
+        });
+
+        // Millisecond Response: Prefetch pages on hover
+        document.querySelectorAll('a').forEach(link => {
+            link.addEventListener('mouseenter', function () {
+                const url = this.getAttribute('href');
+                if (url && url.includes('.html') && !url.startsWith('#')) {
+                    const prefetchLink = document.createElement('link');
+                    prefetchLink.rel = 'prefetch';
+                    prefetchLink.href = url;
+                    document.head.appendChild(prefetchLink);
+                }
+            }, { once: true });
+        });
+
+        AOS.init({
+            duration: 400,
+            once: true,
+            offset: 50
+        });
+    </script>
+
+</body>
+
+</html>

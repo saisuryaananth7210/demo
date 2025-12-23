@@ -1,0 +1,1801 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - New Life and Light Mission</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-client.js"></script>
+    <style>
+        :root {
+            --primary: #1a3a5c;
+            --primary-dark: #0f2640;
+            --secondary: #d4a84b;
+            --success: #27ae60;
+            --danger: #e74c3c;
+            --warning: #f39c12;
+            --white: #ffffff;
+            --bg: #f4f6f8;
+            --border: #e0e6ed;
+            --text-muted: #6c757d;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: #333;
+            min-height: 100vh;
+        }
+
+        /* Login Styles */
+        #login-view {
+            max-width: 420px;
+            margin: 100px auto;
+            background: var(--white);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        #login-view .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        #login-view .logo img {
+            height: 80px;
+        }
+
+        #login-view h2 {
+            text-align: center;
+            color: var(--primary);
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--primary);
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--secondary);
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-warning {
+            background: var(--warning);
+            color: white;
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 0.85rem;
+        }
+
+        .btn-full {
+            width: 100%;
+        }
+
+        /* Dashboard Layout */
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: var(--primary);
+            color: white;
+            padding: 20px 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-header img {
+            height: 60px;
+            margin-bottom: 10px;
+        }
+
+        .sidebar-header h3 {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .sidebar-header p {
+            font-size: 0.75rem;
+            opacity: 0.7;
+        }
+
+        .sidebar-menu {
+            padding: 20px 0;
+        }
+
+        .menu-section {
+            margin-bottom: 20px;
+        }
+
+        .menu-section-title {
+            padding: 10px 25px;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.5;
+        }
+
+        .menu-item {
+            padding: 12px 25px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: background 0.3s;
+            border-left: 3px solid transparent;
+            font-size: 0.9rem;
+        }
+
+        .menu-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .menu-item.active {
+            background: rgba(255, 255, 255, 0.15);
+            border-left-color: var(--secondary);
+        }
+
+        .menu-item i {
+            width: 20px;
+            text-align: center;
+        }
+
+        .sidebar-footer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logout-btn {
+            width: 100%;
+            padding: 12px;
+            background: var(--danger);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 30px;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .page-header h1 {
+            color: var(--primary);
+            font-size: 1.75rem;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: var(--white);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .stat-card .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+
+        .stat-card .stat-icon.blue {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .stat-card .stat-icon.green {
+            background: #e8f5e9;
+            color: #388e3c;
+        }
+
+        .stat-card .stat-icon.orange {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        .stat-card .stat-icon.purple {
+            background: #f3e5f5;
+            color: #7b1fa2;
+        }
+
+        .stat-card .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .stat-card .stat-label {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+        }
+
+        .card-header {
+            padding: 20px 25px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-header h3 {
+            color: var(--primary);
+            font-size: 1.1rem;
+        }
+
+        .card-body {
+            padding: 25px;
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+        }
+
+        td {
+            font-size: 0.9rem;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        .badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge-success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .badge-warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .badge-info {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        /* Page Images Section */
+        .page-images-section {
+            margin-bottom: 30px;
+        }
+
+        .page-title-bar {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 20px 25px;
+            border-radius: 12px 12px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .page-title-bar h3 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .page-title-bar .page-badge {
+            background: var(--secondary);
+            color: var(--primary-dark);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .images-container {
+            background: var(--white);
+            padding: 25px;
+            border-radius: 0 0 12px 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Image Grid */
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .image-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 1px solid var(--border);
+        }
+
+        .image-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .image-card img {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+        }
+
+        .image-card-body {
+            padding: 12px;
+        }
+
+        .image-card-body .name {
+            font-weight: 600;
+            font-size: 0.8rem;
+            word-break: break-all;
+            margin-bottom: 5px;
+            color: var(--primary);
+        }
+
+        .image-card-body .meta {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+        }
+
+        .image-card-body .actions {
+            display: flex;
+            gap: 6px;
+        }
+
+        .image-card-body .actions .btn {
+            flex: 1;
+            justify-content: center;
+            padding: 6px;
+        }
+
+        /* Upload Area */
+        .upload-area {
+            border: 2px dashed var(--border);
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: #fafafa;
+        }
+
+        .upload-area:hover {
+            border-color: var(--secondary);
+            background: rgba(212, 168, 75, 0.05);
+        }
+
+        /* Vital-Bot Chatbot */
+        #vital-bot-toggle {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 10px 25px rgba(26, 58, 92, 0.3);
+            z-index: 2000;
+            transition: var(--transition);
+        }
+
+        #vital-bot-container {
+            position: fixed;
+            bottom: 100px;
+            right: 30px;
+            width: 350px;
+            height: 500px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+            z-index: 2000;
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            border: 1px solid #e0e0e0;
+        }
+
+        #vital-bot-header {
+            padding: 15px;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        #vital-bot-messages {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            background: #f8f9fa;
+        }
+
+        .bot-msg,
+        .user-msg {
+            max-width: 85%;
+            padding: 10px 15px;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .bot-msg {
+            background: white;
+            align-self: flex-start;
+            border-bottom-left-radius: 2px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .user-msg {
+            background: var(--primary-light);
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 2px;
+        }
+
+        #vital-bot-input {
+            padding: 15px;
+            display: flex;
+            gap: 10px;
+            border-top: 1px solid #eee;
+        }
+
+        #viral-bot-field {
+            flex: 1;
+            border: 1px solid #ddd;
+            padding: 8px 12px;
+            border-radius: 20px;
+            outline: none;
+        }
+
+        .trust-score {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .trust-high {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .trust-med {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .trust-low {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .upload-area p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .upload-form {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .upload-form.active {
+            display: block;
+        }
+
+        /* Section visibility */
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        /* Detail Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--white);
+            border-radius: 12px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            color: var(--primary);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-muted);
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .detail-row {
+            display: flex;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            width: 140px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .detail-value {
+            flex: 1;
+        }
+
+        /* Alert */
+        .alert {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .alert-danger {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        #dashboard-view {
+            display: none;
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-muted);
+        }
+
+        .no-data i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .current-image-preview {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .current-image-preview img {
+            width: 80px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+
+        .current-image-preview .info {
+            flex: 1;
+        }
+
+        .current-image-preview .info .name {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .current-image-preview .info .path {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Login View -->
+    <div id="login-view">
+        <div class="logo">
+            <img src="images/logo.png" alt="Logo">
+        </div>
+        <h2>Admin Login</h2>
+        <form id="loginForm">
+            <div class="form-group">
+                <label>Username</label>
+                <input type="text" id="username" placeholder="Enter username" required>
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="password" placeholder="Enter password" required>
+            </div>
+            <button type="submit" class="btn btn-primary btn-full">
+                <i class="fas fa-sign-in-alt"></i> Login
+            </button>
+            <p id="login-error" style="color: var(--danger); text-align: center; display: none; margin-top: 15px;"></p>
+        </form>
+    </div>
+
+    <!-- Dashboard View -->
+    <div id="dashboard-view">
+        <div class="dashboard-container">
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <div class="sidebar-header">
+                    <img src="images/logo.png" alt="Logo">
+                    <h3>NLLM Admin</h3>
+                    <p>Management Dashboard</p>
+                </div>
+                <nav class="sidebar-menu">
+                    <div class="menu-section">
+                        <div class="menu-section-title">Overview</div>
+                        <div class="menu-item active" onclick="switchSection('dashboard')">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span>Dashboard</span>
+                        </div>
+                        <div class="menu-item" onclick="switchSection('campaigns-manager')">
+                            <i class="fas fa-bullhorn"></i>
+                            <span>Manage Campaigns</span>
+                        </div>
+                    </div>
+
+                    <div class="menu-section">
+                        <div class="menu-section-title">Form Submissions</div>
+                        <div class="menu-item" onclick="switchSection('payments')">
+                            <i class="fas fa-credit-card"></i>
+                            <span>Payment Verifications</span>
+                        </div>
+                        <div class="menu-item" onclick="switchSection('contacts')">
+                            <i class="fas fa-envelope"></i>
+                            <span>Contact Messages</span>
+                        </div>
+                    </div>
+
+                    <div class="menu-section">
+                        <div class="menu-section-title">Page Images</div>
+                        <div class="menu-item" onclick="switchSection('images-home')">
+                            <i class="fas fa-home"></i>
+                            <span>Homepage Images</span>
+                        </div>
+                        <div class="menu-item" onclick="switchSection('images-about')">
+                            <i class="fas fa-info-circle"></i>
+                            <span>About Page Images</span>
+                        </div>
+                        <div class="menu-item" onclick="switchSection('images-campaigns')">
+                            <i class="fas fa-bullhorn"></i>
+                            <span>Campaigns Images</span>
+                        </div>
+                        <div class="menu-item" onclick="switchSection('images-contact')">
+                            <i class="fas fa-phone"></i>
+                            <span>Contact Page Images</span>
+                        </div>
+                        <div class="menu-item" onclick="switchSection('images-church')">
+                            <i class="fas fa-church"></i>
+                            <span>Church Ministry Images</span>
+                        </div>
+                        <div class="menu-item" onclick="switchSection('images-all')">
+                            <i class="fas fa-images"></i>
+                            <span>All Images</span>
+                        </div>
+                    </div>
+                </nav>
+                <div class="sidebar-footer">
+                    <button class="logout-btn" onclick="logout()">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+            </aside>
+
+            <!-- Main Content -->
+            <main class="main-content">
+                <!-- Dashboard Section -->
+                <section id="dashboard" class="section active">
+                    <div class="page-header">
+                        <h1>Dashboard Overview</h1>
+                        <button class="btn btn-primary" onclick="refreshData()">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                    </div>
+
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon blue"><i class="fas fa-envelope"></i></div>
+                            <div class="stat-value" id="stat-contacts">0</div>
+                            <div class="stat-label">Contact Messages</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon green"><i class="fas fa-credit-card"></i></div>
+                            <div class="stat-value" id="stat-payments">0</div>
+                            <div class="stat-label">Payment Verifications</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon orange"><i class="fas fa-rupee-sign"></i></div>
+                            <div class="stat-value" id="stat-donations">₹0</div>
+                            <div class="stat-label">Total Donations</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon purple"><i class="fas fa-images"></i></div>
+                            <div class="stat-value" id="stat-images">0</div>
+                            <div class="stat-label">Total Images</div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Recent Payment Verifications</h3>
+                            <button class="btn btn-sm btn-secondary" onclick="switchSection('payments')">View
+                                All</button>
+                        </div>
+                        <div class="card-body">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Amount</th>
+                                        <th>Purpose</th>
+                                        <th>Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="recent-payments"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Campaigns Manager Section -->
+                <section id="campaigns-manager" class="section">
+                    <div class="page-header">
+                        <h1>Manage Campaigns</h1>
+                        <button class="btn btn-primary" onclick="openCampaignModal()">
+                            <i class="fas fa-plus"></i> Add Campaign
+                        </button>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Title</th>
+                                        <th>Goal</th>
+                                        <th>Raised</th>
+                                        <th>Category</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="campaigns-table"></tbody>
+                            </table>
+                            <div id="campaigns-empty" class="no-data" style="display:none;">
+                                <i class="fas fa-bullhorn"></i>
+                                <p>No campaigns found</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Payments Section -->
+                <section id="payments" class="section">
+                    <div class="page-header">
+                        <h1>Payment Verifications</h1>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Phone</th>
+                                        <th>Email</th>
+                                        <th>Amount</th>
+                                        <th>Purpose</th>
+                                        <th>Transaction ID</th>
+                                        <th>Date</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="payments-table"></tbody>
+                            </table>
+                            <div id="payments-empty" class="no-data" style="display:none;">
+                                <i class="fas fa-credit-card"></i>
+                                <p>No payment verifications yet</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Contacts Section -->
+                <section id="contacts" class="section">
+                    <div class="page-header">
+                        <h1>Contact Messages</h1>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Subject</th>
+                                        <th>Message</th>
+                                        <th>Date</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="contacts-table"></tbody>
+                            </table>
+                            <div id="contacts-empty" class="no-data" style="display:none;">
+                                <i class="fas fa-envelope"></i>
+                                <p>No contact messages yet</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Homepage Images Section -->
+                <section id="images-home" class="section">
+                    <div class="page-header">
+                        <h1><i class="fas fa-home"></i> Homepage Images</h1>
+                    </div>
+                    <div class="page-images-section">
+                        <div class="page-title-bar">
+                            <h3><i class="fas fa-image"></i> Current Images <span class="page-badge">index.html</span>
+                            </h3>
+                            <button class="btn btn-success btn-sm" onclick="toggleUploadForm('home')">
+                                <i class="fas fa-plus"></i> Upload New
+                            </button>
+                        </div>
+                        <div class="images-container">
+                            <div class="upload-form" id="upload-form-home">
+                                <h4 style="margin-bottom: 15px; color: var(--primary);">Upload Image for Homepage</h4>
+                                <input type="file" id="upload-input-home" accept="image/*">
+                                <div style="margin-top: 15px;">
+                                    <input type="text" id="upload-name-home"
+                                        placeholder="Save as filename (e.g., hero-banner.jpg)"
+                                        style="margin-bottom: 10px;">
+                                    <button class="btn btn-success" onclick="uploadPageImage('home')">
+                                        <i class="fas fa-upload"></i> Upload
+                                    </button>
+                                    <button class="btn btn-secondary" onclick="toggleUploadForm('home')">Cancel</button>
+                                </div>
+                            </div>
+                            <div class="image-grid" id="images-grid-home"></div>
+                            <div id="images-empty-home" class="no-data" style="display:none;">
+                                <i class="fas fa-images"></i>
+                                <p>No homepage images found</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- About Page Images Section -->
+                <section id="images-about" class="section">
+                    <div class="page-header">
+                        <h1><i class="fas fa-info-circle"></i> About Page Images</h1>
+                    </div>
+                    <div class="page-images-section">
+                        <div class="page-title-bar">
+                            <h3><i class="fas fa-image"></i> Current Images <span class="page-badge">about.html</span>
+                            </h3>
+                            <button class="btn btn-success btn-sm" onclick="toggleUploadForm('about')">
+                                <i class="fas fa-plus"></i> Upload New
+                            </button>
+                        </div>
+                        <div class="images-container">
+                            <div class="upload-form" id="upload-form-about">
+                                <h4 style="margin-bottom: 15px; color: var(--primary);">Upload Image for About Page</h4>
+                                <input type="file" id="upload-input-about" accept="image/*">
+                                <div style="margin-top: 15px;">
+                                    <input type="text" id="upload-name-about"
+                                        placeholder="Save as filename (e.g., founder.jpg)" style="margin-bottom: 10px;">
+                                    <button class="btn btn-success" onclick="uploadPageImage('about')">
+                                        <i class="fas fa-upload"></i> Upload
+                                    </button>
+                                    <button class="btn btn-secondary"
+                                        onclick="toggleUploadForm('about')">Cancel</button>
+                                </div>
+                            </div>
+                            <div class="image-grid" id="images-grid-about"></div>
+                            <div id="images-empty-about" class="no-data" style="display:none;">
+                                <i class="fas fa-images"></i>
+                                <p>No about page images found</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Campaigns Images Section -->
+                <section id="images-campaigns" class="section">
+                    <div class="page-header">
+                        <h1><i class="fas fa-bullhorn"></i> Campaigns Page Images</h1>
+                    </div>
+                    <div class="page-images-section">
+                        <div class="page-title-bar">
+                            <h3><i class="fas fa-image"></i> Current Images <span
+                                    class="page-badge">campaigns.html</span></h3>
+                            <button class="btn btn-success btn-sm" onclick="toggleUploadForm('campaigns')">
+                                <i class="fas fa-plus"></i> Upload New
+                            </button>
+                        </div>
+                        <div class="images-container">
+                            <div class="upload-form" id="upload-form-campaigns">
+                                <h4 style="margin-bottom: 15px; color: var(--primary);">Upload Image for Campaigns Page
+                                </h4>
+                                <input type="file" id="upload-input-campaigns" accept="image/*">
+                                <div style="margin-top: 15px;">
+                                    <input type="text" id="upload-name-campaigns"
+                                        placeholder="Save as filename (e.g., campaign-banner.jpg)"
+                                        style="margin-bottom: 10px;">
+                                    <button class="btn btn-success" onclick="uploadPageImage('campaigns')">
+                                        <i class="fas fa-upload"></i> Upload
+                                    </button>
+                                    <button class="btn btn-secondary"
+                                        onclick="toggleUploadForm('campaigns')">Cancel</button>
+                                </div>
+                            </div>
+                            <div class="image-grid" id="images-grid-campaigns"></div>
+                            <div id="images-empty-campaigns" class="no-data" style="display:none;">
+                                <i class="fas fa-images"></i>
+                                <p>No campaigns images found</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Contact Page Images Section -->
+                <section id="images-contact" class="section">
+                    <div class="page-header">
+                        <h1><i class="fas fa-phone"></i> Contact Page Images</h1>
+                    </div>
+                    <div class="page-images-section">
+                        <div class="page-title-bar">
+                            <h3><i class="fas fa-image"></i> Current Images <span class="page-badge">contact.html</span>
+                            </h3>
+                            <button class="btn btn-success btn-sm" onclick="toggleUploadForm('contact')">
+                                <i class="fas fa-plus"></i> Upload New
+                            </button>
+                        </div>
+                        <div class="images-container">
+                            <div class="upload-form" id="upload-form-contact">
+                                <h4 style="margin-bottom: 15px; color: var(--primary);">Upload Image for Contact Page
+                                </h4>
+                                <input type="file" id="upload-input-contact" accept="image/*">
+                                <div style="margin-top: 15px;">
+                                    <input type="text" id="upload-name-contact"
+                                        placeholder="Save as filename (e.g., contact-banner.jpg)"
+                                        style="margin-bottom: 10px;">
+                                    <button class="btn btn-success" onclick="uploadPageImage('contact')">
+                                        <i class="fas fa-upload"></i> Upload
+                                    </button>
+                                    <button class="btn btn-secondary"
+                                        onclick="toggleUploadForm('contact')">Cancel</button>
+                                </div>
+                            </div>
+                            <div class="image-grid" id="images-grid-contact"></div>
+                            <div id="images-empty-contact" class="no-data" style="display:none;">
+                                <i class="fas fa-images"></i>
+                                <p>No contact page images found</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Church Ministry Images Section -->
+                <section id="images-church" class="section">
+                    <div class="page-header">
+                        <h1><i class="fas fa-church"></i> Church Ministry Images</h1>
+                    </div>
+                    <div class="page-images-section">
+                        <div class="page-title-bar">
+                            <h3><i class="fas fa-image"></i> Current Images <span
+                                    class="page-badge">church-ministry.html</span></h3>
+                            <button class="btn btn-success btn-sm" onclick="toggleUploadForm('church')">
+                                <i class="fas fa-plus"></i> Upload New
+                            </button>
+                        </div>
+                        <div class="images-container">
+                            <div class="upload-form" id="upload-form-church">
+                                <h4 style="margin-bottom: 15px; color: var(--primary);">Upload Image for Church Ministry
+                                    Page</h4>
+                                <input type="file" id="upload-input-church" accept="image/*">
+                                <div style="margin-top: 15px;">
+                                    <input type="text" id="upload-name-church"
+                                        placeholder="Save as filename (e.g., church-banner.jpg)"
+                                        style="margin-bottom: 10px;">
+                                    <button class="btn btn-success" onclick="uploadPageImage('church')">
+                                        <i class="fas fa-upload"></i> Upload
+                                    </button>
+                                    <button class="btn btn-secondary"
+                                        onclick="toggleUploadForm('church')">Cancel</button>
+                                </div>
+                            </div>
+                            <div class="image-grid" id="images-grid-church"></div>
+                            <div id="images-empty-church" class="no-data" style="display:none;">
+                                <i class="fas fa-images"></i>
+                                <p>No church ministry images found</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- All Images Section -->
+                <section id="images-all" class="section">
+                    <div class="page-header">
+                        <h1><i class="fas fa-images"></i> All Project Images</h1>
+                        <button class="btn btn-primary" onclick="fetchImages()">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="image-grid" id="images-grid-all"></div>
+                            <div id="images-empty-all" class="no-data" style="display:none;">
+                                <i class="fas fa-images"></i>
+                                <p>No images found</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+    <!-- Vital-Bot Chat Window -->
+    <div id="vital-bot-toggle" onclick="toggleVitalBot()">
+        <i class="fas fa-robot"></i>
+    </div>
+
+    <div id="vital-bot-container">
+        <div id="vital-bot-header">
+            <div><i class="fas fa-shield-alt"></i> Vital-Bot Security Assistant</div>
+            <i class="fas fa-times" onclick="toggleVitalBot()" style="cursor:pointer"></i>
+        </div>
+        <div id="vital-bot-messages">
+            <div class="bot-msg">Hello Admin! I am Vital-Bot. I help you verify if donor data is genuine. Ask me to
+                "analyze payments" or "check ID".</div>
+        </div>
+        <div id="vital-bot-input">
+            <input type="text" id="viral-bot-field" placeholder="Ask Vital-Bot...">
+            <button class="btn btn-sm btn-primary" onclick="botSendMessage()"><i
+                    class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <!-- Campaign Modal -->
+    <div class="modal-overlay" id="campaignModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="campaign-modal-title">Add Campaign</h3>
+                <button class="modal-close" onclick="closeCampaignModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="campaignForm">
+                    <input type="hidden" id="campaign-id">
+                    <div class="form-group">
+                        <label>Title</label>
+                        <input type="text" id="campaign-title" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea id="campaign-description" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Image URL</label>
+                        <input type="text" id="campaign-image" placeholder="images/filename.jpg">
+                    </div>
+                    <div class="form-group">
+                        <label>Goal Amount</label>
+                        <input type="number" id="campaign-goal" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Category</label>
+                        <input type="text" id="campaign-category" placeholder="e.g. Education">
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-full">Save Campaign</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Detail Modal -->
+    <div class="modal-overlay" id="detailModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="modal-title">Details</h3>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="modal-body"></div>
+        </div>
+    </div>
+
+    <!-- Replace Image Modal -->
+    <div class="modal-overlay" id="replaceModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Replace Image</h3>
+                <button class="modal-close" onclick="closeReplaceModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="current-image-preview" id="replace-preview"></div>
+                <div class="form-group">
+                    <label>Select New Image</label>
+                    <input type="file" id="replace-input" accept="image/*">
+                </div>
+                <button class="btn btn-success btn-full" onclick="confirmReplace()">
+                    <i class="fas fa-exchange-alt"></i> Replace Image
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        // Global State
+        let allData = { contacts: [], payments: [], campaigns: [] };
+        let allImages = [];
+        let currentReplaceImage = null;
+
+        const pageImageMappings = {
+            'home': ['logo.png', 'hero', 'banner', 'home', 'index'],
+            'about': ['founder', 'about', 'team', 'vision', 'mission'],
+            'campaigns': ['campaign', 'children', 'women', 'poor', 'education', 'empowerment'],
+            'contact': ['contact', 'map', 'office'],
+            'church': ['church', 'ministry', 'prayer', 'worship']
+        };
+
+        // --- Authentication & Session Management ---
+        window.addEventListener('load', async () => {
+            const { data: { session } } = await getSession();
+            if (session) {
+                showDashboard();
+            }
+        });
+
+        const loginForm = document.getElementById('loginForm');
+        const loginBtn = loginForm.querySelector('button');
+
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            loginBtn.innerText = 'Authenticating...';
+            loginBtn.disabled = true;
+
+            const { data, error } = await adminSignIn(email, password);
+
+            if (error) {
+                alert('Login failed: ' + error.message);
+                loginBtn.innerText = 'Login';
+                loginBtn.disabled = false;
+            } else {
+                showDashboard();
+            }
+        });
+
+        async function showDashboard() {
+            document.getElementById('login-view').style.display = 'none';
+            document.getElementById('dashboard-view').style.display = 'flex';
+            await loadDashboardData();
+        }
+
+        async function handleLogout() {
+            await adminSignOut();
+            location.reload();
+        }
+
+        function logout() {
+            handleLogout();
+        }
+
+        // --- Dashboard Data Loading ---
+        async function loadDashboardData() {
+            try {
+                // Fetch Stats
+                const { data: statsData } = await supabaseClient.from('donations').select('amount');
+                const { data: contactsData } = await supabaseClient.from('contact_messages').select('id');
+                const { data: campaignsData } = await supabaseClient.from('campaigns').select('id');
+
+                const totalDonations = statsData ? statsData.reduce((sum, d) => sum + parseFloat(d.amount), 0) : 0;
+
+                document.getElementById('stat-payments').innerText = `$${totalDonations.toLocaleString()}`;
+                document.getElementById('stat-contacts').innerText = (contactsData?.length || 0);
+                document.getElementById('stat-campaigns').innerText = (campaignsData?.length || 0);
+
+                // Load sections
+                await Promise.all([
+                    loadContacts(),
+                    loadPayments(),
+                    loadCampaignsManager()
+                ]);
+            } catch (err) {
+                console.error('Error loading dashboard:', err);
+            }
+        }
+
+        async function refreshData() {
+            await loadDashboardData();
+            alert('Data refreshed successfully!');
+        }
+
+        // --- Section Loaders ---
+        async function loadContacts() {
+            const { data, error } = await supabaseClient.from('contact_messages').select('*').order('created_at', { ascending: false });
+            if (!error) {
+                allData.contacts = data;
+                renderContacts();
+            }
+        }
+
+        async function loadPayments() {
+            const { data, error } = await supabaseClient.from('donations').select('*').order('created_at', { ascending: false });
+            if (!error) {
+                allData.payments = data;
+                renderPayments();
+                renderRecentPayments();
+            }
+        }
+
+        async function loadCampaignsManager() {
+            const { data, error } = await supabaseClient.from('campaigns').select('*').order('created_at', { ascending: false });
+            if (!error) {
+                allData.campaigns = data;
+                renderCampaigns();
+            }
+        }
+
+        // --- Rendering Functions ---
+        function renderContacts() {
+            const tbody = document.getElementById('contacts-table');
+            const empty = document.getElementById('contacts-empty');
+            const contacts = allData.contacts || [];
+
+            if (contacts.length === 0) {
+                tbody.innerHTML = '';
+                empty.style.display = 'block';
+                return;
+            }
+
+            empty.style.display = 'none';
+            tbody.innerHTML = contacts.map((c) => `
+                <tr>
+                    <td>${c.name || '-'}</td>
+                    <td>${c.email || '-'}</td>
+                    <td>${c.subject || '-'}</td>
+                    <td>${(c.message || '').substring(0, 50)}${(c.message || '').length > 50 ? '...' : ''}</td>
+                    <td>${new Date(c.created_at).toLocaleString()}</td>
+                    <td>
+                        <button class="btn btn-sm btn-primary" onclick="viewContactDetails('${c.id}')">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="btn btn-sm btn-danger" onclick="deleteContact('${c.id}')">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function renderPayments() {
+            const header = document.querySelector('#payments thead tr');
+            if (header && !header.innerHTML.includes('Trust Score')) {
+                const th = document.createElement('th');
+                th.innerText = 'Trust Score';
+                header.insertBefore(th, header.children[6]);
+            }
+
+            const tbody = document.getElementById('payments-table');
+            const empty = document.getElementById('payments-empty');
+            const payments = allData.payments || [];
+
+            if (payments.length === 0) {
+                tbody.innerHTML = '';
+                empty.style.display = 'block';
+                return;
+            }
+
+            empty.style.display = 'none';
+            tbody.innerHTML = payments.map((p) => {
+                const name = p.first_name ? `${p.first_name} ${p.last_name}` : (p.name || 'Unknown');
+                const trustBadge = getTrustBadge(p);
+                return `
+                <tr>
+                    <td>${name}</td>
+                    <td>${p.phone || '-'}</td>
+                    <td>${p.email || '-'}</td>
+                    <td><strong>₹${parseFloat(p.amount || 0).toLocaleString()}</strong></td>
+                    <td>${p.purpose || '-'}</td>
+                    <td><span class="badge badge-success">${p.transaction_id || '-'}</span></td>
+                    <td>${trustBadge}</td>
+                    <td>${new Date(p.created_at).toLocaleString()}</td>
+                    <td>
+                        <button class="btn btn-sm btn-primary" onclick="viewPaymentDetails('${p.id}')">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="btn btn-sm btn-danger" onclick="deletePayment('${p.id}')">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+                `;
+            }).join('');
+        }
+
+        function renderRecentPayments() {
+            const tbody = document.getElementById('recent-payments');
+            const payments = (allData.payments || []).slice(0, 5);
+
+            if (payments.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color: var(--text-muted);">No payments yet</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = payments.map(p => {
+                const name = p.first_name ? `${p.first_name} ${p.last_name}` : (p.name || 'Unknown');
+                return `
+                <tr>
+                    <td>${name}</td>
+                    <td><strong>₹${parseFloat(p.amount || 0).toLocaleString()}</strong></td>
+                    <td>${p.purpose || '-'}</td>
+                    <td>${new Date(p.created_at).toLocaleDateString()}</td>
+                </tr>
+                `;
+            }).join('');
+        }
+
+        function renderCampaigns() {
+            const tbody = document.getElementById('campaigns-table');
+            const empty = document.getElementById('campaigns-empty');
+            const campaigns = allData.campaigns || [];
+
+            if (campaigns.length === 0) {
+                tbody.innerHTML = '';
+                empty.style.display = 'block';
+                return;
+            }
+
+            empty.style.display = 'none';
+            tbody.innerHTML = campaigns.map(c => `
+                <tr>
+                    <td>${c.title}</td>
+                    <td>₹${parseFloat(c.goal_amount).toLocaleString()}</td>
+                    <td>₹${parseFloat(c.current_amount).toLocaleString()}</td>
+                    <td>${c.category || '-'}</td>
+                    <td>
+                        <button class="btn btn-sm btn-primary" onclick="editCampaign('${c.id}')">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-sm btn-danger" onclick="deleteCampaign('${c.id}')">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // --- Detail Modals ---
+        function viewContactDetails(id) {
+            const c = allData.contacts.find(item => item.id === id);
+            if (!c) return;
+
+            document.getElementById('modal-title').textContent = 'Contact Message Details';
+            document.getElementById('modal-body').innerHTML = `
+                <div class="detail-row"><div class="detail-label">Name</div><div class="detail-value">${c.name || '-'}</div></div>
+                <div class="detail-row"><div class="detail-label">Email</div><div class="detail-value">${c.email || '-'}</div></div>
+                <div class="detail-row"><div class="detail-label">Subject</div><div class="detail-value">${c.subject || '-'}</div></div>
+                <div class="detail-row"><div class="detail-label">Message</div><div class="detail-value">${c.message || '-'}</div></div>
+                <div class="detail-row"><div class="detail-label">Date</div><div class="detail-value">${new Date(c.created_at).toLocaleString()}</div></div>
+            `;
+            document.getElementById('detailModal').classList.add('active');
+        }
+
+        function viewPaymentDetails(id) {
+            const p = allData.payments.find(item => item.id === id);
+            if (!p) return;
+
+            const name = p.first_name ? `${p.first_name} ${p.last_name}` : (p.name || 'Unknown');
+            document.getElementById('modal-title').textContent = 'Payment Details';
+            document.getElementById('modal-body').innerHTML = `
+                <div class="detail-row"><div class="detail-label">Name</div><div class="detail-value">${name}</div></div>
+                <div class="detail-row"><div class="detail-label">Phone</div><div class="detail-value">${p.phone || '-'}</div></div>
+                <div class="detail-row"><div class="detail-label">Email</div><div class="detail-value">${p.email || '-'}</div></div>
+                <div class="detail-row"><div class="detail-label">Amount</div><div class="detail-value"><strong>₹${parseFloat(p.amount || 0).toLocaleString()}</strong></div></div>
+                <div class="detail-row"><div class="detail-label">Purpose</div><div class="detail-value">${p.purpose || '-'}</div></div>
+                <div class="detail-row"><div class="detail-label">Transaction ID</div><div class="detail-value"><span class="badge badge-success">${p.transaction_id || '-'}</span></div></div>
+                <div class="detail-row"><div class="detail-label">Date</div><div class="detail-value">${new Date(p.created_at).toLocaleString()}</div></div>
+            `;
+            document.getElementById('detailModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('detailModal').classList.remove('active');
+        }
+
+        // --- Deletion Functions ---
+        async function deleteContact(id) {
+            if (!confirm('Are you sure you want to delete this contact message?')) return;
+            const { error } = await supabaseClient.from('contact_messages').delete().eq('id', id);
+            if (!error) {
+                await loadDashboardData();
+            }
+        }
+
+        async function deletePayment(id) {
+            if (!confirm('Are you sure you want to delete this payment record?')) return;
+            const { error } = await supabaseClient.from('donations').delete().eq('id', id);
+            if (!error) {
+                await loadDashboardData();
+            }
+        }
+
+        async function deleteCampaign(id) {
+            if (!confirm('Are you sure you want to delete this campaign?')) return;
+            const { error } = await supabaseClient.from('campaigns').delete().eq('id', id);
+            if (!error) {
+                await loadDashboardData();
+            }
+        }
+
+        // --- Campaign CRUD ---
+        function openCampaignModal(campaign = null) {
+            const form = document.getElementById('campaignForm');
+            const title = document.getElementById('campaign-modal-title');
+
+            form.reset();
+            document.getElementById('campaign-id').value = '';
+
+            if (campaign) {
+                title.innerText = 'Edit Campaign';
+                document.getElementById('campaign-id').value = campaign.id;
+                document.getElementById('campaign-title').value = campaign.title;
+                document.getElementById('campaign-description').value = campaign.description || '';
+                document.getElementById('campaign-image').value = campaign.image_url || '';
+                document.getElementById('campaign-goal').value = campaign.goal_amount;
+                document.getElementById('campaign-category').value = campaign.category || '';
+            } else {
+                title.innerText = 'Add Campaign';
+            }
+
+            document.getElementById('campaignModal').classList.add('active');
+        }
+
+        function closeCampaignModal() {
+            document.getElementById('campaignModal').classList.remove('active');
+        }
+
+        async function editCampaign(id) {
+            const campaign = allData.campaigns.find(c => c.id === id);
+            if (campaign) {
+                openCampaignModal(campaign);
+            }
+        }
+
+        document.getElementById('campaignForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('campaign-id').value;
+            const campaignData = {
+                title: document.getElementById('campaign-title').value,
+                description: document.getElementById('campaign-description').value,
+                image_url: document.getElementById('campaign-image').value,
+                goal_amount: parseFloat(document.getElementById('campaign-goal').value),
+                category: document.getElementById('campaign-category').value,
+            };
+
+            let res;
+            if (id) {
+                res = await supabaseClient.from('campaigns').update(campaignData).eq('id', id);
+            } else {
+                res = await supabaseClient.from('campaigns').insert([campaignData]);
+            }
+
+            if (!res.error) {
+                closeCampaignModal();
+                await loadDashboardData();
+            } else {
+                alert('Error saving campaign: ' + res.error.message);
+            }
+        });
+
+        // --- Vital-Bot Logic ---
+        function toggleVitalBot() {
+            const container = document.getElementById('vital-bot-container');
+            const toggle = document.getElementById('vital-bot-toggle');
+            if (container.style.display === 'flex') {
+                container.style.display = 'none';
+                toggle.style.background = 'var(--primary)';
+            } else {
+                container.style.display = 'flex';
+                toggle.style.background = '#dc3545';
+                document.getElementById('viral-bot-field').focus();
+            }
+        }
+
+        function botSendMessage() {
+            const input = document.getElementById('viral-bot-field');
+            const text = input.value.trim();
+            if (!text) return;
+            addChatMessage(text, 'user');
+            input.value = '';
+            setTimeout(() => { processBotCommand(text); }, 600);
+        }
+
+        function addChatMessage(text, type) {
+            const msgs = document.getElementById('vital-bot-messages');
+            const div = document.createElement('div');
+            div.className = type === 'bot' ? 'bot-msg' : 'user-msg';
+            div.innerHTML = text;
+            msgs.appendChild(div);
+            msgs.scrollTop = msgs.scrollHeight;
+        }
+
+        function processBotCommand(text) {
+            const input = text.toLowerCase();
+            let response = "";
+            if (input.includes('analyze') || input.includes('check all') || input.includes('scan')) {
+                const payments = allData.payments || [];
+                if (payments.length === 0) {
+                    response = "I scanned the database. There are no payments to analyze yet.";
+                } else {
+                    const suspicious = payments.filter(p => !p.transaction_id || p.transaction_id.length < 8);
+                    const duplicateIds = payments.filter((p, i) => payments.findIndex(p2 => p2.transaction_id === p.transaction_id) !== i);
+                    response = `<strong>Analysis Complete!</strong><br>• Total Payments: ${payments.length}<br>• Suspicious: ${suspicious.length}<br>• Potential Duplicates: ${duplicateIds.length}`;
+                }
+            } else if (input.includes('hello') || input.includes('hi')) {
+                response = "Hello Admin! I'm here to help you verify donation data.";
+            } else {
+                response = "I'm not sure how to handle that. Would you like me to analyze recent payments?";
+            }
+            addChatMessage(response, 'bot');
+        }
+
+        document.getElementById('viral-bot-field')?.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') botSendMessage();
+        });
+
+        function getTrustBadge(p) {
+            let score = 100;
+            if (!p.transaction_id || p.transaction_id.length < 10) score -= 40;
+            if (p.email && (p.email.includes('test') || p.email.includes('example'))) score -= 30;
+            if (p.phone && /^(\d)\1{9}$/.test(p.phone)) score -= 50;
+            if (score <= 50) return `<span class="trust-score trust-low"><i class="fas fa-exclamation-triangle"></i> LOW</span>`;
+            if (score <= 80) return `<span class="trust-score trust-med"><i class="fas fa-info-circle"></i> MED</span>`;
+            return `<span class="trust-score trust-high"><i class="fas fa-check-circle"></i> HIGH</span>`;
+        }
+
+        // --- UI Utils ---
+        function switchSection(sectionId) {
+            document.querySelectorAll('.section').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+            const event = window.event;
+            if (event && event.target) {
+                const menuItem = event.target.closest('.menu-item');
+                if (menuItem) menuItem.classList.add('active');
+            }
+        }
+
+        window.addEventListener('click', (e) => {
+            if (e.target.classList.contains('modal-overlay')) {
+                e.target.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+
+</html>
